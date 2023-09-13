@@ -1,0 +1,118 @@
+<template>
+    <!-- Modal/Popup Box LWC starts here -->
+    <lightning-modal-header label="Reference Managment Process"></lightning-modal-header>
+    <lightning-modal-body>
+        <div if:true={isModalOpen} style="background-color: white;" class="slds-p-around_medium"
+            id="modal-content-id-1">
+
+
+            <lightning-record-edit-form object-api-name="Account">
+                <lightning-input-field name="Name" onchange={inputChange} field-name="Name"></lightning-input-field>
+                <lightning-input-field name="Country" onchange={inputChange}
+                    field-name="BillingCountry"></lightning-input-field>
+                <lightning-input-field name="Industry" onchange={inputChange}
+                    field-name="Industry"></lightning-input-field>
+                <lightning-input-field name="ServicingLead" onchange={inputChange}
+                    field-name="Servicing_Lead__c"></lightning-input-field>
+                <lightning-input-field name="ServicingPartner" onchange={inputChange}
+                    field-name="Servicing_Partner__c"></lightning-input-field>
+            </lightning-record-edit-form>
+            <lightning-record-edit-form object-api-name="Opportunity">
+                <lightning-input-field name="InstanceType" onchange={inputChange}
+                    field-name="Instance_Type__c"></lightning-input-field>
+            </lightning-record-edit-form>
+        </div>
+        <lightning-spinner if:true={isLoaded} style="background-color: white !important" alternative-text="Loading"
+            size="medium" class="spinnerClass"></lightning-spinner>
+    </lightning-modal-body>
+    <lightning-modal-footer if:true={isModalOpen}>
+        <lightning-button variant="brand" label="Search" onclick={handleSearch}></lightning-button>
+        <!--   <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>-->
+    </lightning-modal-footer>
+    <lightning-card if:true={openDatTable} title="Account Records">
+        <div class="slds-m-around_medium">
+            <lightning-datatable key-field="Id" data={accountData} columns={columns} onrowselection={getSelectedRows}>
+            </lightning-datatable>
+            <lightning-spinner if:true={isLoaded} style="background-color: white !important" alternative-text="Loading"
+                size="medium" class="spinnerClass"></lightning-spinner>
+        </div>
+        <lightning-modal-footer>
+            <lightning-button variant="brand" label="Next" onclick={handleNext}></lightning-button>
+            <!--   <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>-->
+        </lightning-modal-footer>
+    </lightning-card>
+
+    <div if:true={openCreateForm}>
+        <lightning-modal-body>
+            <lightning-record-edit-form object-api-name="Reference_Management_Process__c">
+                <lightning-input-field name="acc" value={obj.accId} onchange={inputReferenceForm}
+                    field-name="Account__c"></lightning-input-field>
+                <lightning-input-field name="accO" value={obj.OwnerId} onchange={inputReferenceForm}
+                    field-name="Account_Owner__c"></lightning-input-field>
+                <lightning-input-field name="compB" value={obj.accId} onchange={inputReferenceForm}
+                    field-name="Company_Background__c"></lightning-input-field>
+                <lightning-input-field name="comp" value={oppRecordList.Competitors_in_Bid__c}
+                    onchange={inputReferenceForm} field-name="Competitors__c"></lightning-input-field>
+                <lightning-input-field name="con" field-name="Contact__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="den" field-name="Denial_Reason__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="des" field-name="Description_of_request__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="exi" value={oppRecordList.Vendor_Selected__c} onchange={inputReferenceForm}
+                    field-name="Existing_vendors_if_applicable__c"></lightning-input-field>
+                <lightning-input-field name="opp" value={oppRecordList.Id} onchange={inputReferenceForm}
+                    field-name="Opportunity__c"></lightning-input-field>
+                <lightning-input-field name="pro" value={oppRecordList.Relationship_with_Prospect__c}
+                    field-name="Prospect_Customer__c"></lightning-input-field>
+                <lightning-input-field name="rec" value={obj.CSM_c} onchange={inputReferenceForm}
+                    field-name="Recipient_from_Account__c"></lightning-input-field>
+                <lightning-input-field name="refA" field-name="Reference_Approval_Deadline__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="refM"
+                    field-name="Reference_Management_Process_Name__c"></lightning-input-field>
+                <lightning-input-field name="refO" field-name="Reference_objectives_key_use_cases__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="stg" value={oppRecordList.StageName}
+                    field-name="Stage__c"></lightning-input-field>
+                <lightning-input-field name="sts" field-name="Status__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="wADYN" field-name="What_activity_do_you_need__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="wWP" field-name="Who_will_participate__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+            </lightning-record-edit-form>
+            <lightning-spinner if:true={isLoaded} style="background-color: white !important" alternative-text="Loading"
+                size="medium" class="spinnerClass"></lightning-spinner>
+        </lightning-modal-body>
+        <lightning-modal-footer>
+            <lightning-button variant="brand" label="Create" onclick={handleCreateReference}></lightning-button>
+            <!--   <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>-->
+        </lightning-modal-footer>
+    </div>
+    <div if:true={selectContactForm}>
+        <lightning-modal-body>
+            <lightning-datatable key-field="Id" data={conRecordList} columns={conColumns}
+                onrowselection={getSelectedRowss}>
+                >
+            </lightning-datatable>
+        </lightning-modal-body>
+        <lightning-modal-footer>
+            <lightning-button variant="brand" label="Select Contact" onclick={handleSelectContact}></lightning-button>
+            <!--   <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>-->
+        </lightning-modal-footer>
+    </div>
+    <div if:true={verifyContactForm}>
+        <lightning-modal-body>
+
+            <lightning-combobox style="height: 9.3%important;" class="" name="vContact" label="Verify the Contact"
+                data-index={index} value={value} placeholder="Choose Option" options={optionsVerify}
+                onchange={handleCheck}></lightning-combobox>
+        </lightning-modal-body>
+
+        <lightning-modal-footer>
+            <lightning-button variant="brand" label="Confirm" onclick={handleVerifyContact}></lightning-button>
+            <!--   <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>-->
+        </lightning-modal-footer>
+    </div>
+</template>

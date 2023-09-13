@@ -1,0 +1,29 @@
+<template>
+    <lightning-modal-header label="Reference Managment Process"></lightning-modal-header>
+    <lightning-modal-body>
+        <div if:true={isModalOpen} style="background-color: white;" class="slds-p-around_medium"
+            id="modal-content-id-1">
+            <lightning-record-edit-form object-api-name="Reference_Management_Process__c">
+               
+                
+                <lightning-input-field name="con" value={conRecordList.Id} field-name="Contact__c"
+                onchange={inputReferenceForm}></lightning-input-field>
+               
+                <lightning-input-field name="des" field-name="Description_of_request__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="refA" field-name="Reference_Approval_Deadline__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+                <lightning-input-field name="wADYN" field-name="What_activity_do_you_need__c"
+                    onchange={inputReferenceForm}></lightning-input-field>
+          
+            </lightning-record-edit-form>
+            <lightning-spinner if:true={isLoaded} style="background-color: white !important" alternative-text="Loading"
+            size="medium" class="spinnerClass"></lightning-spinner>
+        </div>
+
+    </lightning-modal-body>
+    <lightning-modal-footer if:true={isModalOpen}>
+        <lightning-button variant="brand" label="Create" onclick={handleCreate}></lightning-button>
+        <!--   <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>-->
+    </lightning-modal-footer>
+</template>
